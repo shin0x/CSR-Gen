@@ -1,7 +1,7 @@
 import json
 import zipfile
 import io
-from flask import Flask, request, render_template, send_file
+from flask import Flask, request, render_template, send_file, make_response
 from cryptography import x509
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes
@@ -17,13 +17,27 @@ with open('info.json', 'r') as f:
 
 @app.route('/')
 def index():
-    return render_template('index.html',
-                           suffix=default_info['suffix'],
-                           country=default_info['C'],
-                           state=default_info['ST'],
-                           locality=default_info['L'],
-                           organization=default_info['O'],
-                           organizational_unit=default_info['OU'])
+    config_cookie = request.cookies.get('config')
+    if config_cookie:
+        config = json.loads(config_cookie)
+        return make_response(render_template('index.html',
+                                             suffix=config['suffix'],
+                                             country=config['country'],
+                                             state=config['state'],
+                                             locality=config['locality'],
+                                             organization=config['organization'],
+                                             organizational_unit=config['organizational_unit'],
+                                             disable_suffix=config['disable_suffix']))
+    else:
+        config = default_info
+        return render_template('index.html',
+                               suffix=default_info['suffix'],
+                               country=default_info['C'],
+                               state=default_info['ST'],
+                               locality=default_info['L'],
+                               organization=default_info['O'],
+                               organizational_unit=default_info['OU'],
+                               disable_suffix=False)
 
 
 @app.route('/generate_csr', methods=['POST'])

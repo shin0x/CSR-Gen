@@ -131,6 +131,58 @@
                 updateSuffixLabel();
             }
         }
+
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function saveConfig() {
+            var config = {
+                country: document.getElementById('country').value,
+                state: document.getElementById('state').value,
+                locality: document.getElementById('locality').value,
+                organization: document.getElementById('organization').value,
+                organizational_unit: document.getElementById('organizational_unit').value,
+                suffix: document.getElementById('suffix').value,
+                disable_suffix: document.getElementById('disable_suffix').checked
+            };
+            setCookie('config', JSON.stringify(config), 365);
+            alert('Configuration saved!');
+        }
+
+        function loadConfig() {
+            var config = getCookie('config');
+            if (config) {
+                config = JSON.parse(config);
+                document.getElementById('country').value = config.country;
+                document.getElementById('state').value = config.state;
+                document.getElementById('locality').value = config.locality;
+                document.getElementById('organization').value = config.organization;
+                document.getElementById('organizational_unit').value = config.organizational_unit;
+                document.getElementById('suffix').value = config.suffix;
+                document.getElementById('disable_suffix').checked = config.disable_suffix;
+                updateSuffixLabel();
+            }
+        }
+        window.onload = loadConfig;
+
     </script>
 </head>
 <body>
@@ -160,6 +212,7 @@
             <input type="text" id="organizational_unit" name="organizational_unit" value="{{ organizational_unit }}" maxlength="255">
             <label for="suffix">Suffix:</label>
             <input type="text" id="suffix" name="suffix" value="{{ suffix }}" oninput="updateSuffixLabel()" maxlength="255">
+            <button type="button" class="toggle-button" onclick="saveConfig()">Save Configuration</button>
         </div>
         <input type="submit" value="Generate CSR">
     </form>
