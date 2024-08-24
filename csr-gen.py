@@ -10,22 +10,48 @@ from cryptography.hazmat.primitives import serialization
 
 app = Flask(__name__)
 
-# Load information from info.json
+# Load default information from info.json
 with open('info.json', 'r') as f:
-    info = json.load(f)
+    default_info = json.load(f)
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html',
+                           suffix=default_info['suffix'],
+                           country=default_info['C'],
+                           state=default_info['ST'],
+                           locality=default_info['L'],
+                           organization=default_info['O'],
+                           organizational_unit=default_info['OU'])
 
 
 @app.route('/generate_csr', methods=['POST'])
 def generate_csr():
     domain_names = request.form['domain_names'].split(',')
 
-    if info["Suffix"] != "":
-        domain_names = [f'{domain.strip()}.{info["Suffix"]}' for domain in domain_names]
+    # Create a copy of default_info and update it with form data
+    info = default_info.copy()
+
+    info.update({
+        "C": request.form.get('country', default_info['C']),
+        "ST": request.form.get('state', default_info['ST']),
+        "L": request.form.get('locality', default_info['L']),
+        "O": request.form.get('organization', default_info['O']),
+        "OU": request.form.get('organizational_unit', default_info['OU']),
+        "suffix": request.form.get('suffix', default_info['suffix'])
+    })
+
+    # Check if the suffix field is disabled
+    if request.form.get('disable_suffix'):
+        info["suffix"] = ""
+
+    # Ensure the country code is exactly 2 characters long
+    if len(info['C']) != 2:
+        return "Country code must be exactly 2 characters long", 400
+
+    if info["suffix"]:
+        domain_names = [f'{domain.strip()}.{info["suffix"]}' for domain in domain_names]
 
     # Create a key pair
     key = rsa.generate_private_key(

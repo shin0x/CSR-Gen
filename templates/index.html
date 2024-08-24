@@ -55,14 +55,119 @@
         input[type="submit"]:hover {
             background-color: #3700b3;
         }
+        .advanced-settings {
+            display: none;
+            margin-top: 20px;
+        }
+        .toggle-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .suffix-label {
+            font-weight: bold;
+            color: #bbb;
+            display: flex;
+            vertical-align: middle;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            height: 16px;
+        }
+        .suffix-container {
+            display: flex;
+            vertical-align: middle;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            height: 16px;
+        }
+        .suffix-container .checkbox-container {
+            display: flex;
+            vertical-align: middle;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            height: 16px;
+        }
+        .checkbox-container label {
+            display: inline;
+            vertical-align: middle;
+            margin-bottom: 20px;
+            height: 16px;
+
+        }
+        .checkbox-container input[type="checkbox"] {
+            vertical-align: middle;
+            display: inline;
+            margin-bottom: 20px;
+            height: 16px;
+
+        }
     </style>
+    <script>
+        function toggleAdvancedSettings() {
+            var settings = document.getElementById('advanced-settings');
+            if (settings.style.display === 'none') {
+                settings.style.display = 'block';
+            } else {
+                settings.style.display = 'none';
+            }
+        }
+
+        function updateSuffixLabel() {
+            var suffixInput = document.getElementById('suffix');
+            var suffixLabel = document.getElementById('suffix-label');
+            suffixLabel.textContent = 'Current Suffix: ' + suffixInput.value;
+        }
+
+        function toggleSuffixField() {
+            var suffixInput = document.getElementById('suffix');
+            var suffixCheckbox = document.getElementById('disable_suffix');
+            if (suffixCheckbox.checked) {
+                suffixInput.disabled = true;
+                suffixInput.value = '';
+                updateSuffixLabel();
+            } else {
+                suffixInput.disabled = false;
+                suffixInput.value = '{{ suffix }}';
+                updateSuffixLabel();
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="container">
     <h1>Generate CSR</h1>
     <form action="/generate_csr" method="post">
         <label for="domain_names">Enter the domain names (comma-separated):</label>
-        <input type="text" id="domain_names" name="domain_names" required>
+        <input type="text" id="domain_names" name="domain_names" required maxlength="255">
+        <div class="suffix-container">
+            <label id="suffix-label" class="suffix-label">Current Suffix: {{ suffix }}</label>
+            <div class="checkbox-container">
+                <label for="disable_suffix">Disable Suffix:</label>
+                <input type="checkbox" id="disable_suffix" name="disable_suffix" onclick="toggleSuffixField()">
+            </div>
+        </div>
+        <button type="button" class="toggle-button" onclick="toggleAdvancedSettings()">Advanced Settings</button>
+        <div id="advanced-settings" class="advanced-settings">
+            <label for="country">Country Name (C):</label>
+            <input type="text" id="country" name="country" value="{{ country }}" maxlength="2">
+            <label for="state">State or Province Name (ST):</label>
+            <input type="text" id="state" name="state" value="{{ state }}" maxlength="255">
+            <label for="locality">Locality Name (L):</label>
+            <input type="text" id="locality" name="locality" value="{{ locality }}" maxlength="255">
+            <label for="organization">Organization Name (O):</label>
+            <input type="text" id="organization" name="organization" value="{{ organization }}" maxlength="255">
+            <label for="organizational_unit">Organizational Unit Name (OU):</label>
+            <input type="text" id="organizational_unit" name="organizational_unit" value="{{ organizational_unit }}" maxlength="255">
+            <label for="suffix">Suffix:</label>
+            <input type="text" id="suffix" name="suffix" value="{{ suffix }}" oninput="updateSuffixLabel()" maxlength="255">
+        </div>
         <input type="submit" value="Generate CSR">
     </form>
 </div>
