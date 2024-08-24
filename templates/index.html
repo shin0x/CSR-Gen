@@ -74,39 +74,32 @@
         .suffix-label {
             font-weight: bold;
             color: #bbb;
-            display: flex;
+            display: inline-block;
             vertical-align: middle;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            height: 16px;
+            max-width: 70%; /* Adjust this value as needed */
+            word-wrap: break-word;
         }
         .suffix-container {
             display: flex;
-            vertical-align: middle;
+            align-items: center;
             justify-content: space-between;
             margin-bottom: 20px;
-            height: 16px;
         }
         .suffix-container .checkbox-container {
             display: flex;
-            vertical-align: middle;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            height: 16px;
+            align-items: center;
+            margin-left: 10px;
         }
         .checkbox-container label {
-            display: inline;
+            margin: 0;
             vertical-align: middle;
-            margin-bottom: 20px;
-            height: 16px;
-
         }
         .checkbox-container input[type="checkbox"] {
+            margin-left: 5px;
             vertical-align: middle;
-            display: inline;
-            margin-bottom: 20px;
-            height: 16px;
-
+            line-height: 1.5;
+            height: 16px; /* Adjust this value to match the height of the text */
+            margin: 0; /* Remove default margin */
         }
     </style>
     <script>
