@@ -181,6 +181,13 @@
                 updateSuffixLabel();
             }
         }
+
+        function clearConfig() {
+            setCookie('config', '', -1);
+            alert('Configuration cleared!');
+            location.reload();
+        }
+
         window.onload = loadConfig;
 
     </script>
@@ -213,6 +220,7 @@
             <label for="suffix">Suffix:</label>
             <input type="text" id="suffix" name="suffix" value="{{ suffix }}" oninput="updateSuffixLabel()" maxlength="255">
             <button type="button" class="toggle-button" onclick="saveConfig()">Save Configuration</button>
+            <button type="button" class="toggle-button" onclick="clearConfig()">Clear Configuration</button>
         </div>
         <input type="submit" value="Generate CSR">
     </form>
