@@ -1,2 +1,2 @@
-Flask==2.2.5
-cryptography==3.4.7
+Flask==2.3.2
+cryptography==42.0.4
